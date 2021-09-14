@@ -1,0 +1,40 @@
+{if !$user}
+	{if $smarty.server.HTTP_X_REQUESTED_WITH}
+		<a href='#loginModal' data-toggle="modal"><span class='glyphicon glyphicon-user'></span></a>
+		<div class="modal" id="loginModal" tabindex="-1" role="dialog">
+		  <div class="modal-dialog" role="document">
+			<div class="modal-content" style='padding:10px'>
+	{/if}	
+	
+	<form method='POST' id='login_form'>
+	  <div class="form-group">
+		<label for="exampleInputEmail1">Логин</label>
+		<input required="required" type="text" name='login' value='{$smarty.post.login}' class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Введите логин"/>
+		<small id="emailHelp" class="form-text text-muted">должен быть зарегистрирован в системе.</small>
+	  </div>
+	  <div class="form-group">
+		<label for="exampleInputPassword1">Пароль</label>
+		<input required="required" name='password' type="password" value='{$smarty.post.password}' class="form-control" id="exampleInputPassword1" placeholder="Пароль"/>
+	  </div>	 
+	  <div class="form-group">
+		<a href='{"?app=user&page=frontend&action=forgot"|set_query}'>Забыли пароль?</a>
+	  </div>
+	  {if $smarty.post.password && $smarty.post.login}
+			<p class="text-danger">неверный пароль или email не зарегистрирован</p>
+	  {/if}
+	  <button type="submit" class="btn btn-primary">Войти</button>
+	  <a href='{"?app=user&page=frontend&action=register"|set_query}' class="btn btn-default">Регистрация</a>
+	</form> 
+			
+	{if $smarty.server.HTTP_X_REQUESTED_WITH}	
+			</div>
+		  </div>
+		</div>
+	{/if}
+{else}
+	 <a href="#" class="dropdown-toggle" data-toggle="dropdown">{$user.login} <span class="caret"></span></a>
+	  <ul class="dropdown-menu" role="menu">
+		<li><a href="{'?app=user&page=backend&action=profile'|set_query}"><span class='glyphicon glyphicon-user'></span> Профиль</a></li>
+		<li><a href="{'?action=logout'|set_query}"><span class='glyphicon glyphicon-log-out'></span> Выйти</a></li>
+	  </ul>
+{/if}

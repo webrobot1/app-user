@@ -1,0 +1,194 @@
+<h3>Пользователи <button class='btn-sm btn-success' data-toggle="modal" data-target="#modal">+</button></h3>
+
+<div class="modal" id='modal' tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+	<div class="modal-content">
+	  <div class="modal-header">
+		<h3 class="modal-title">
+			новый пользователь
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		</h3>
+	  </div>
+	  <div class="modal-body">
+		<form method='POST' action='{"action=insert"|set_query}'>	
+			Логин <input type='text' class='form-control' name='new_login' value='' />
+			Пароль <input type='text' class='form-control' name='new_password' value='' />
+			
+			<br clear='all' />
+			<button type="submit" class="btn btn-primary">Save changes</button>
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		  </form>
+	   </div>
+	</div>
+  </div>
+</div>
+<br clear='all'/>
+<form method='GET' action='{"?page&action"|set_query}'>
+	<div class='col-lg-6'>			
+		<div class="form-group col-lg-6">
+			<label for="contact" class='control-label col-xs-2'>Роли</label>
+			<div class="col-xs-8">
+				<select name='callback[values][]' class='form-control' multiple>
+					{foreach $permission_values as $application=>$values}
+						<optgroup label="{$application|translate}">
+						  {foreach $values as $variant}
+							<option value='{$variant.value_id}' {if $smarty.get.callback.values && in_array($variant.value_id, $smarty.get.callback.values)}selected{/if}>{$variant.name}</option>
+						  {/foreach}
+					  </optgroup>
+					{/foreach}
+				</select>
+			</div>	
+		</div>
+		<div class="form-group col-lg-6">
+			<label for="contact" class='control-label col-xs-2'>Логин</label>
+			<div class="col-xs-8">
+				<input class='form-control' name='callback[login]' type='text' value='{$smarty.get.callback.login}' />
+			</div>	
+		</div>			
+		<div class="form-group col-lg-6">
+			<label for="contact" class='control-label col-xs-2'>Телефон</label>
+			<div class="col-xs-8">
+				<input class='form-control' name='callback[phone]' type='text' value='{$smarty.get.callback.phone}' />
+			</div>	
+		</div>	
+		<br clear='all' />		
+		<div class="form-group col-lg-6">
+			<label for="contact" class='control-label col-xs-4'>Запрос на смену пароля</label>
+			<div class="col-xs-8">
+				<select name='callback[reset]' class='form-control'>
+					<option></option>
+					<option value='1' {if $smarty.get.callback.reset}selected{/if}>Да</option>
+				</select>
+			</div>	
+		</div>		
+	</div>	
+	<br clear='all' />
+	<button type='submit' class='btn btn-success'>Показать</button>
+</form>
+<br clear='all' />
+<br clear='all' />
+<table class='table table-bordered table-stripted'>
+	<thead>
+		<tr>
+			<th>
+				<a href='{"callback[sort]=user_id&callback[order]={if !$smarty.get.callback.order}0{else}1{/if}"|set_query}'>
+					№{if $smarty.get.callback.sort=='user_id'} <span class='glyphicon glyphicon-chevron-{if $smarty.get.callback.order}down{else}up{/if}'></span>{/if}
+				</a>
+			<th>
+				<a href='{"callback[sort]=login&callback[order]={if !$smarty.get.callback.order}1{else}0{/if}"|set_query}'>
+					Логин{if $smarty.get.callback.sort=='login'} <span class='glyphicon glyphicon-chevron-{if $smarty.get.callback.order}up{else}down{/if}'></span>{/if}
+				</a>
+			</th>
+			<th>
+				<a href='{"callback[sort]=active&callback[order]={if !$smarty.get.callback.order}1{else}0{/if}"|set_query}'>
+					Активный{if $smarty.get.callback.sort=='active'} <span class='glyphicon glyphicon-chevron-{if $smarty.get.callback.order}up{else}down{/if}'></span>{/if}
+				</a>
+			</th>
+			<th>
+				<a href='{"callback[sort]=phone&callback[order]={if !$smarty.get.callback.order}1{else}0{/if}"|set_query}'>
+					Телефон{if $smarty.get.callback.sort=='phone'} <span class='glyphicon glyphicon-chevron-{if $smarty.get.callback.order}up{else}down{/if}'></span>{/if}
+				</a>
+			</th>	
+			<th>Доступы</th>		
+			<th>
+				<a href='{"callback[sort]=default_app&callback[order]={if !$smarty.get.callback.order}1{else}0{/if}"|set_query}'>
+					Приложение по умолчанию{if $smarty.get.callback.sort=='default_app'} <span class='glyphicon glyphicon-chevron-{if $smarty.get.callback.order}up{else}down{/if}'></span>{/if}
+				</a>
+			</th>	
+			<th>
+				<a href='{"callback[sort]=reset&callback[order]={if !$smarty.get.callback.order}1{else}0{/if}"|set_query}'>
+					Сброс пароля{if $smarty.get.callback.sort=='reset'} <span class='glyphicon glyphicon-chevron-{if $smarty.get.callback.order}up{else}down{/if}'></span>{/if}
+				</a>
+			</th>				
+			<th>Войти как</th>				
+			<th></th>					
+		</tr>
+	</thead>
+	{foreach $users.data as $user}
+		<tr>
+			<td>{$user.user_id}</td>
+			<td>{$user.login}</td>
+			<td>{if $user.active}<span class='text-success glyphicon glyphicon-ok-sign'></span>{else}<span class='text-danger glyphicon glyphicon-remove-sign'></span>{/if}</td>
+			<td>
+				{$user.phone|ltrim:0}
+				<a href='#' data-toggle="modal" data-target="#modal_{$user.user_id}_phone" ><span class='glyphicon glyphicon-pencil'></span></a>
+				<div class="modal" id='modal_{$user.user_id}_phone' tabindex="-1" role="dialog">
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h5 class="modal-title">Телефон {$user.login}</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						  <span aria-hidden="true">&times;</span>
+						</button>
+					  </div>
+					  <div class="modal-body">						
+						  <form method='POST' action='{"action=save_phone"|set_query}'>	
+							<input type='hidden' name='user_id' value='{$user.user_id}'/>
+							<input type='text' class='form-control' value='{$user.phone}' name='phone' />		
+							<br clear='all' />								
+							<button type="submit" class="btn btn-primary">Save changes</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						  </form>
+					   </div>
+					</div>
+				  </div>
+				</div>
+			</td>
+			<td>			
+				{foreach $user.permissions as $app=>$value}
+					<b>{$app|translate}</b>:
+					{$value.name}	
+					<br/>
+				{/foreach}	
+				<a href='{"?page&action=save_permission&user_id=`$user.user_id`"|set_query}' data-toggle="modal" data-target="#main_modal" ><span class='glyphicon glyphicon-pencil'></span></a>
+			</td>
+			<td> 
+				{if $user.default_app}{$user.default_app|translate}{/if}
+				<a href='#' data-toggle="modal" data-target="#modal_{$user.user_id}_app" ><span class='glyphicon glyphicon-pencil'></span></a>
+				<div class="modal" id='modal_{$user.user_id}_app' tabindex="-1" role="dialog">
+				  <div class="modal-dialog" role="document">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h5 class="modal-title">Приложение по умолчанию для {$user.login}</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						  <span aria-hidden="true">&times;</span>
+						</button>
+					  </div>
+					  <div class="modal-body">						
+						  <form method='POST' action='{"action=save_default_app"|set_query}'>	
+							<input type='hidden' name='user_id' value='{$user.user_id}'/>
+							<select name='default_app' class='form-control'>
+								<option></option>
+								{foreach $applications as $key=>$application}
+									{if $application.backend && ($user.permissions[$key] || $user.login=='admin')}
+										<option value='{$key}' {if $user.default_app == $key}selected{/if}>{$key|translate}</option>
+									{/if}
+								{/foreach}	
+							</select>
+							<br clear='all' />							
+							<button type="submit" class="btn btn-primary">Save changes</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						  </form>
+					   </div>
+					</div>
+				  </div>
+				</div>
+			</td> 	
+			<td>
+				{if !$user.reset}
+					{if $user.phone}
+						<a href='{"?page&action=user_reset&id=`$user.user_id`"|set_query}'><span class='text-info glyphicon glyphicon-retweet'></span></a>
+					{/if}
+				{else}	
+					<span class='text-success glyphicon glyphicon-ok'></span>
+				{/if}
+			</td>
+			<td>{if $user.login!='admin'}<a target='_blank' href='{"?page&action=user_enter&id=`$user.user_id`"|set_query}'><span class='text-info glyphicon glyphicon-log-in'></span></a>{/if}</td>
+			<td>{if $user.login!='admin'}<a href='{"?page&action=user_delete&id=`$user.user_id`"|set_query}'><span class='text-danger glyphicon glyphicon-remove'></span></a>{/if}</td>
+		</tr>
+	{/foreach}
+</table>
+
+{include file='pagination.html' count=$users.count}	

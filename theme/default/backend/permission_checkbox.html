@@ -1,0 +1,32 @@
+<h2 class="modal-title">Роли {$user.login}</h2>
+{if $user.login=='admin'}
+	<p>Все роли доступны</p>
+{else}
+	<form method='POST' action='{"?page&action&user_id&save=1"|set_query}' class='ajax_update'>	
+		{foreach $permission_values as $application=>$values}
+			<table class='table table-bordered'>
+				<tr>
+					<th colspan='2'>{$application|translate}</th>
+				</tr>
+				<tr>
+					<td>
+						<ul class="list-unstyled">
+							<li>
+								<input type='radio' {if !$user.permissions[$application]}checked{/if} id='v{$application}0' name='pr[{$application}]' value=''/> 
+								<label for='v{$application}0'>нет</label>
+							</li>
+						  {foreach $values as $variant}
+								<li{if $user.permissions[$application].value_id == $variant.value_id} class='bg-info'{/if}>
+									<input type='radio' {if $user.permissions[$application].value_id == $variant.value_id}checked{/if} id='v{$application}{$variant.value_id}' name='pr[{$application}]' value='{$variant.value_id}' />
+									<label for='v{$application}{$variant.value_id}'>{$variant.name}</label>
+								</li>
+						  {/foreach}
+						</ul>
+					</td>
+				</tr>
+			</table>
+		{/foreach}
+		<button type="submit" class="btn btn-primary">Сохранить</button>
+	</form>
+{/if}
+

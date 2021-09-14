@@ -1,0 +1,12 @@
+<script type='text/javascript' src="/app/{$smarty.const.APP}/theme/default/backend/js/main.js?{$smarty.now|date_format:'%Y%m%d'}"></script>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="navbar-main">    
+      <ul class="nav navbar-nav">
+       	<li{if $smarty.get.page!='permission'} class='active'{/if}><a href='{"?"|set_query}'>Пользователи</a></li>
+		<li{if $smarty.get.page=='permission'} class='active'{/if}><a href='{"?page=permission"|set_query}'>Привелегии</a></li>
+      </ul>     
+    </div>
+  </div>
+</nav>

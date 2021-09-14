@@ -1,0 +1,13 @@
+<h3>Профиль</h3>
+<form method='POST' action='{"?page&action=update_profile"|set_query}'>	
+	Телефон <input type='text' class='form-control' name='callback[phone]' value='{$user.phone}' />
+	Новый пароль <input type='password' class='form-control' name='callback[password]' value='' />
+	Тема
+	<select name='callback[default_theme]' class='form-control'>
+		<option value='default'{if $user.default_theme=='default'} selected{/if}>Стандартная</option>
+		<option value='custom'{if $user.default_theme=='custom'} selected{/if}>Удобная</option>
+	</select>
+	<br clear='all' />
+	<button type="submit" class="btn btn-primary">Сохранить</button>
+  </form>
+</div>

@@ -1,0 +1,101 @@
+<script type='text/javascript' src="/theme/default/js/tree.jquery.js"></script>	
+<link rel="stylesheet" href="/theme/default/css/jqtree.css" />
+
+{literal}
+	<style type="text/css">
+		#main_modal .modal-lg{
+			width:50% !important	
+		}
+	</style>
+{/literal}
+
+<h3>Права доступа</h3>
+
+<h4>Названия ролей</h4>
+<form method='POST' action='{"action=add"|set_query}'>
+	<div class="row">
+		<div class="col-xs-2">
+			<div class="input-group">
+				<input type='text' class='form-control' required name='name' value="" />
+				<span class="input-group-btn">
+					<button type='submit' class='btn btn-success'>+</button>
+				</span>
+			</div>
+		</div>
+	</div>
+</form>
+<br clear='all'/>
+<table class='table table-bordered'>
+	{foreach $permissions as $value}
+		<tr data-id='{$value.variant_id}'>
+			<td>{$value.name}</td>
+			<td><a href='{"action=delete&table=variant&id=`$value.variant_id`"|set_query}'><span class='text-danger glyphicon glyphicon-remove'></span></a></td>
+		</tr>
+	{/foreach}
+</table>
+
+
+<div>
+	<h4>Приложения ролей</h4>
+	<form method='POST' action='{"action=add_page"|set_query}' class='horizontal'>
+		<div class="row">
+			<div class="col-xs-1">		
+				<select name='groups' class='form-control'>
+					<option value=''></option>
+					{foreach $applications as $key=>$value}
+						{if $value.backend && ($user.login=='admin' || $user.permissions[$key])}
+							<option value='{$key}'>{$key|translate}</option>
+						{/if}
+					{/foreach}
+				</select>	
+			</div>	
+			<div class="col-xs-2">	
+				<div class="input-group">
+					<select name='variants' class='form-control'>
+						<option value=''></option>
+						{foreach $permissions as $variant}
+							<option value='{$variant.variant_id}'>{$variant.name}</option>
+						{/foreach}
+					</select>	
+					<span class="input-group-btn">
+						<button type='submit' class='btn btn-success'>добавить</button>
+					</span>
+				</div>
+			</div>
+		</div>
+		<br clear='all'/>
+	</form>	
+
+	<table class='table table-bordered dataTable' data-order='[[ 1, "ASC" ],[ 0, "ASC" ]]'>
+		<thead>
+			<tr>
+				<th>Приложение</th>	
+				<th>Роль</th>	
+				<th>Доступы роли</th>
+				<th>Удалить</th>
+			</tr>
+		</thead>
+		{foreach $permissions_values as $app=>$values}
+			{foreach $values as $value}
+				<tr data-id='{$value.value_id}' data-variants='{$value.variant_id}'>
+					<td>{$value.application|translate}</td>
+					<td>{$value.name}</td>
+					<td>	
+						<a href="{"?page&action=permission_variant&value_id=`$value.value_id`"|set_query}" data-toggle="modal" data-target="#main_modal">
+							({$value.pages|count}) вариантов
+						</a>
+					</td>
+					<td><a href='{"action=delete&table=value&id=`$value.value_id`"|set_query}'><span class='text-danger glyphicon glyphicon-remove'></span></a></td>
+				</tr>
+			{/foreach}
+		{/foreach}
+		<tfoot>
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </tfoot>
+	</table>
+</div>

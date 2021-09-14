@@ -1,0 +1,36 @@
+<h3>Доступы для приложения "{$value.application|translate}", роль - "{$value.name}"</h3>
+{if $user.permissions[$value.application] || $user.login=='admin'}
+	<form method='POST' action='{"action=add_page&value=`$value.value_id`"|set_query}' class='ajax_update'>
+		{foreach $permissions_variants[$value.application] as $page=>$actions}
+			<div>
+				<h4>
+					{$page|translate} ({$page}) 
+					<small>
+						<input id='{$value.application}_{$page}_{$key}_all' type='checkbox' onclick='javascript:$(this).closest("div").find("ul input").prop("checked", this.checked)' autocomplete='off' /> 
+						<label for='{$value.application}_{$page}_{$key}_all'>выбрать все</label>
+					</small>
+				</h4>
+				{if $page == $page|translate}
+					<p>Для установки доступа в раздел необходим перевод в приложении Помощь слова "{$page}"</p>
+				{else}
+					<ul>
+						{foreach $actions as $action=>$name name="fr"}
+							<li>
+								{if $name == $action}
+									<p>Для установки доступа к странице необходим перевод в приложении Помощь слова "{$action}"</p>
+								{else}									
+									<input type='checkbox' id='{$value.application}_{$page}_{$action}' name='permission[{$page}][{$action}]' value='1' {if $value.applications[$page][$action]} checked{/if} 
+										{if $user.login!='admin' && !$user.permissions[$value.application].applications[$page][$action]} disabled{/if} /> 
+									<label for="{$value.application}_{$page}_{$action}">{$name}</label> <a target='_blank' href='{"?app=`$value.application`&page=`$page`&action=`$action`"|set_query}'> ({$action})</a>
+								{/if}
+							</li>
+						{/foreach}
+					</ul>
+				{/if}
+			</div>
+		{/foreach}
+		<input class='btn btn-success' type='submit' value='Сохранить' />
+	</form>
+{else}
+	<p>У вас нет доступа в приложение данной роли для его редактирования</p>
+{/if}	
