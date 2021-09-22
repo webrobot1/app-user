@@ -6,8 +6,7 @@ class BackendModel extends FrontendModel
 	private static $pages = array();
 	private static $variants = array();
 	private static $users = array();
-	
-	
+		
 	final function login(string $login, string $hash=null, string $password=null)
 	{ 
 		if(!$hash && !$password) return false;
@@ -38,7 +37,6 @@ class BackendModel extends FrontendModel
 		
 		return ($id?static::$users[$id]:(!$limit?$data['data']:$data));
 	}
-
 	
 	final public function check_admin(string $page=null, string $action=null, string $app)
 	{
