@@ -3,10 +3,9 @@ namespace Edisom\App\user\model;
 
 class BackendModel extends FrontendModel 
 {		
-
-	private $pages = array();
-	private $variants = array();
-	private $users = array();
+	private static $pages = array();
+	private static $variants = array();
+	private static $users = array();
 	
 	
 	final function login(string $login, string $hash=null, string $password=null)
@@ -26,18 +25,18 @@ class BackendModel extends FrontendModel
 	}
 	
 	public function users(int $id = null, array $callback = null, int $limit = 50):array{
-		if($id && $this->users[$id])
-			return $this->users[$id];
+		if($id && static::$users[$id])
+			return static::$users[$id];
 		
 		if($data = parent::users($id, $callback, $limit))
 		{
 			foreach($data['data'] as &$user){
 				$user['permissions'] = $this->getPermission($user['user_id']);	
-				$this->users[$user['user_id']] = $user;	
+				static::$users[$user['user_id']] = $user;	
 			}
 		}
 		
-		return ($id?$this->users[$id]:(!$limit?$data['data']:$data));
+		return ($id?static::$users[$id]:(!$limit?$data['data']:$data));
 	}
 
 	
@@ -83,10 +82,10 @@ class BackendModel extends FrontendModel
 	
 	// одна роль может иметь разные доступы в разные страницы
 	private function get_pages($id){
-		if(!isset($this->pages[$id]))
-			$this->pages[$id] = $this->query('SELECT * FROM permission__page where value_id = '.$id);
+		if(!isset(static::$pages[$id]))
+			static::$pages[$id] = $this->query('SELECT * FROM permission__page where value_id = '.$id);
 		
-		return $this->pages[$id];	
+		return static::$pages[$id];	
 	}
 		
 	// сгрупированные по приложениям роли
@@ -112,15 +111,15 @@ class BackendModel extends FrontendModel
 
 	// просто спрачник названия ролей
 	public function get_variants(int $id=null){
-		if($id && isset($this->variants[$id]))
-			return $this->variants[$id];
+		if($id && isset(static::$variants[$id]))
+			return static::$variants[$id];
 		
 		if($data = $this->query('SELECT * FROM permission__variant'.($id?' WHERE variant_id='.$id:''), 'variant_id'))
 			foreach($data as $row)
-				$this->variants[$row['variant_id']] = $row;
+				static::$variants[$row['variant_id']] = $row;
 				
 				
-		return ($id?$this->variants[$id]:$data);
+		return ($id?static::$variants[$id]:$data);
 	}
 		
 	
